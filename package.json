@@ -1,0 +1,17 @@
+{
+  "scripts": {
+    "start": "node main.js",
+    "debug": "nodemon -L --inspect=0.0.0.0:9229 main.js -- -h 0.0.0.0 -p 3000 -c ./cache"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "multer": "^2.0.2",
+    "mysql2": "^3.15.3",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
