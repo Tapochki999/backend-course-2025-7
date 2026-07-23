@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles/output.css">
+    <title>Inventory Item Details</title>
+</head>
+<body>
+    <section> 
+        <h2>Inventory Item Details</h2>
+
+        <p>ID:</p>
+        <p id="id_name">example 1</p>
+
+        <p>Name of item:</p>
+        <p id="item_name">example 2</p>
+
+        <p>Description of item:</p>
+        <p id="item_desc">example 3</p>
+
+        <p>Item photo:</p>
+        <img id="item_img" src="https://via.placeholder.com/450x300.png?text=No+Image+Available" alt="Inventory Photo">
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const itemId = urlParams.get('id');
+            const hasPhoto = urlParams.get('has_photo'); 
+
+            const idElement = document.getElementById('id_name');
+            const nameElement = document.getElementById('item_name');
+            const descElement = document.getElementById('item_desc');
+            const imgElement = document.getElementById('item_img');
+
+            if (!itemId) {
+                idElement.textContent = 'N/A';
+                nameElement.textContent = 'Помилка: Не вказано ID ресурсу в адресному рядку (URL).';
+                nameElement.classList.add('error-message');
+                descElement.textContent = 'Будь ласка, перейдіть на цю сторінку через форму пошуку.';
+                imgElement.src = 'https://via.placeholder.com/450x300.png?text=Error:+No+ID';
+                return; 
+            }
+
+            try {
+                const response = await fetch(`/inventory/${itemId}`);
+
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        throw new Error(`Ресурс з ID ${itemId} не знайдено в базі даних.`);
+                    } else {
+                        throw new Error(`Сталася помилка на стороні сервера: Статус ${response.status}`);
+                    }
+                }
+
+                const itemData = await response.json();
+
+                idElement.classList.remove('loading');
+                nameElement.classList.remove('loading');
+                descElement.classList.remove('loading');
+
+                idElement.textContent = itemData.id;
+                nameElement.textContent = itemData.name;
+                
+                let finalDescription = itemData.description && itemData.description.trim() !== '' 
+                    ? itemData.description 
+                    : 'Опис для цього ресурсу відсутній.';
+
+                if (hasPhoto === 'true' && itemData.photoPath) {
+                    const photoUrl = `${window.location.origin}/inventory/${itemData.id}/photo`;
+                    finalDescription += ` (Photo: ${photoUrl})`;
+                }
+
+                descElement.textContent = finalDescription;
+
+                if (itemData.photoPath) {
+                    imgElement.src = `/inventory/${itemData.id}/photo`;
+                } else {
+                    imgElement.src = 'https://via.placeholder.com/450x300.png?text=No+Photo+Available';
+                }
+
+            } catch (error) {
+                console.error('Помилка виконання fetch-запиту:', error);
+                
+                idElement.textContent = itemId;
+                nameElement.textContent = 'Помилка завантаження даних';
+                nameElement.classList.add('error-message');
+                descElement.textContent = error.message;
+                imgElement.src = 'https://via.placeholder.com/450x300.png?text=Fetch+Error';
+            }
+        });
+    </script>
+</body>
+</html>
