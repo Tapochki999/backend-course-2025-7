@@ -42,15 +42,23 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
 
 const app = express();
-
+app.use(express.static(path.join(__dirname, "/public")));
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const upload = multer({ dest: cache });
 
+app.get('/Menu.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'Menu.html'));
+});
+
 app.get('/RegisterForm.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'RegisterForm.html'));
+});
+
+app.get('/Output.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'Output.html'));
 });
 
 app.get('/SearchForm.html', (req, res) => {
@@ -366,7 +374,7 @@ app.post('/search', async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'RegisterForm.html'));
+  res.sendFile(path.join(__dirname, 'Menu.html'));
 });
 
 app.use((req, res) => {
