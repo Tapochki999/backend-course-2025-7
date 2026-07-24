@@ -49,6 +49,10 @@ app.use(express.urlencoded({ extended: true }));
 
 const upload = multer({ dest: cache });
 
+app.get('/Menu.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'Menu.html'));
+});
+
 app.get('/RegisterForm.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'RegisterForm.html'));
 });
@@ -370,7 +374,7 @@ app.post('/search', async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'RegisterForm.html'));
+  res.sendFile(path.join(__dirname, 'Menu.html'));
 });
 
 app.use((req, res) => {
